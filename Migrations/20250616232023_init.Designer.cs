@@ -4,6 +4,7 @@ using BackEnd.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackEnd.Migrations
 {
     [DbContext(typeof(DeglaContext))]
-    partial class DeglaContextModelSnapshot : ModelSnapshot
+    [Migration("20250616232023_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,31 +95,35 @@ namespace BackEnd.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("actionTaken")
+                    b.Property<string>("ActionTaken")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("date")
+                    b.Property<string>("Date")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("location")
+                    b.Property<string>("InjuryLocation")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("memberId")
+                    b.Property<string>("InjuryType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MemberId")
                         .HasColumnType("int");
 
-                    b.Property<int>("stadeNo")
+                    b.Property<int>("StadeNo")
                         .HasColumnType("int");
 
-                    b.Property<string>("type")
+                    b.Property<string>("Time")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("memberId");
+                    b.HasIndex("MemberId");
 
                     b.ToTable("injuries");
                 });
@@ -209,24 +216,28 @@ namespace BackEnd.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("date")
+                    b.Property<string>("Date")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("memberId")
+                    b.Property<int>("MemberId")
                         .HasColumnType("int");
 
-                    b.Property<string>("note")
+                    b.Property<string>("Note")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("type")
+                    b.Property<string>("Time")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("memberId");
+                    b.HasIndex("MemberId");
 
                     b.ToTable("violations");
                 });
@@ -244,24 +255,24 @@ namespace BackEnd.Migrations
 
             modelBuilder.Entity("BackEnd.Models.Injury", b =>
                 {
-                    b.HasOne("BackEnd.Models.Member", "member")
+                    b.HasOne("BackEnd.Models.Member", "Member")
                         .WithMany("injuries")
-                        .HasForeignKey("memberId")
+                        .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("member");
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("BackEnd.Models.Violation", b =>
                 {
-                    b.HasOne("BackEnd.Models.Member", "member")
+                    b.HasOne("BackEnd.Models.Member", "Member")
                         .WithMany("violations")
-                        .HasForeignKey("memberId")
+                        .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("member");
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("BackEnd.Models.Member", b =>

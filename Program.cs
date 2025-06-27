@@ -1,6 +1,9 @@
-
+﻿
 using BackEnd.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace BackEnd
 {
@@ -18,25 +21,41 @@ namespace BackEnd
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowNetlify", policy =>
+                options.AddPolicy("AllowNetlifyOrigin", policy =>
                 {
-                    policy.WithOrigins("https://wadi-degla-peterkameel.netlify.app")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
+                    policy
+                        .WithOrigins(
+                            "https://wadi-degla-peterkameel.netlify.app",
+                            "http://localhost:4200"
+                        )
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
                 });
             });
 
-
-            builder.Services.AddCors(options =>
+            builder.Services.AddAuthentication(options =>
             {
-                options.AddDefaultPolicy(policy =>
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    policy.WithOrigins("http://localhost:4200")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
-                });
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                };
             });
 
             //context
@@ -46,6 +65,7 @@ namespace BackEnd
 
             var app = builder.Build();
 
+            
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -55,10 +75,11 @@ namespace BackEnd
 
             app.UseHttpsRedirection();
 
+            app.UseCors("AllowNetlifyOrigin");
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseCors("AllowNetlify");
 
             app.MapControllers();
 

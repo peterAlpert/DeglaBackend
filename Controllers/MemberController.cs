@@ -24,7 +24,7 @@ namespace BackEnd.Controllers
         [HttpGet]
         [Route("id")]
         public IActionResult getMember(int id) {
-            Member member = context.Members.FirstOrDefault(mem => mem.ID == id);
+            Member member = context.Members.FirstOrDefault(mem => mem.Id == id);
             return Ok(member);
         }
 
@@ -32,7 +32,7 @@ namespace BackEnd.Controllers
         [Route("name")]
         public IActionResult getMemberByName(string name)
         {
-            Member member = context.Members.FirstOrDefault(mem => mem.Name.Contains(name));
+            Member member = context.Members.FirstOrDefault(mem => mem.MemberName.Contains(name));
             return Ok(member);
         }
 
@@ -40,7 +40,7 @@ namespace BackEnd.Controllers
         [Route("{MemberNo:int}")]
         public IActionResult getMemberByMemberNo(int membership)
         {
-            Member member = context.Members.FirstOrDefault(mem => mem.membership == membership);
+            Member member = context.Members.FirstOrDefault(mem => mem.Membership == membership);
             return Ok(member);
         }
 

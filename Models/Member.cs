@@ -2,11 +2,13 @@
 {
     public class Member
     {
-        public int ID { get; set; }
-        public string? Name { get; set; }
-        public DateOnly DateOB { get; set; }
-        public int membership { get; set; }
-        public int family { get; set; }
+       
+        public int Id { get; set; }
+        public string? MemberName { get; set; }
+        public int Membership { get; set; }
+        public List<Entry>? Entries { get; set; }
+        public List<Violation> violations { get; set; }
+        public List<Injury> injuries { get; set; }
 
     }
 }

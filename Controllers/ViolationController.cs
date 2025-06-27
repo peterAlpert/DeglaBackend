@@ -15,38 +15,31 @@ namespace BackEnd.Controllers
         public ViolationController(DeglaContext context)
         {
             _context = context;
-        }
-
-        [HttpGet("history")]
-        public async Task<IActionResult> GetHistory([FromQuery] string name, [FromQuery] string membership)
-        {
-            var violations = await _context.violations
-                .Where(v => v.MemberName == name && v.Membership == membership)
-                .ToListAsync();
-
-            return Ok(violations);
+            
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddViolation([FromBody] ViolationDto violation)
+        public async Task<IActionResult> AddViolation([FromBody] Violation violation)
         {
-            if (violation == null)
-                return BadRequest("Invalid data");
+            //var member = await _context.Members.FindAsync(violation.memberId);
+            //if (member == null)
+            //    return NotFound("العضو غير موجود");
 
-            var newViolation = new Violation
-            {
-                MemberName = violation.MemberName,
-                Membership = violation.Membership,
-                Type = violation.Type,
-                Note = violation.Note,
-                Date = violation.Date,
-                Time = violation.Time
-            };
-
-            _context.violations.Add(newViolation);
+            _context.violations.Add(violation);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Violation saved" });
+            return Ok();
+        }
+
+        [HttpGet("get-by-member/{memberId}")]
+        public async Task<IActionResult> GetViolationsByMember(int memberId)
+        {
+            var violations = await _context.violations
+                .Where(v => v.memberId == memberId)
+                .OrderByDescending(v => v.date)
+                .ToListAsync();
+
+            return Ok(violations);
         }
     }
 }
